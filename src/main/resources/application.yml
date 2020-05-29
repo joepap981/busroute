@@ -1,0 +1,23 @@
+server:
+  port: 8080
+  servlet:
+    contextPath: /busroute
+
+spring:
+  application:
+    name: busroute-generator
+  profiles:
+    active: local
+
+
+---
+spring:
+  profiles: local
+  datasource:
+    platform: postgresql
+    url: jdbc:postgresql://localhost:5432/local?currentSchema=busroute&charSet=utf-8&prepareThreshold=1
+    username: postgres
+    password: park3852
+    driver-class-name: org.postgresql.Driver
+    continue-on-error: true
+    sql-script-encoding: UTF-8
