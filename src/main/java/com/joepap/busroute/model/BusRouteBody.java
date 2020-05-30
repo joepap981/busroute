@@ -5,7 +5,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import java.util.List;
 
 @XmlRootElement(name = "msgBody")
-public class MsgBody {
+public class BusRouteBody {
 
     @XmlElement(name = "busRouteList")
     public List<BusRouteVO> busRouteVOList;
