@@ -7,8 +7,16 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @Data
 public class ServiceConfiguration {
-    @Value("${gbis.base-url}")
-    private String baseUrl;
-    @Value("${gbis.service-key}")
-    private String serviceKey;
+    /** GBIS */
+    @Value("${hosts.gbis.base-url}")
+    private String gbisBaseUrl;
+    @Value("${hosts.gbis.service-key}")
+    private String gbisServiceKey;
+
+    /** OpenRoute **/
+    @Value("${hosts.open-route.base-url}")
+    private String openRouteBaseUrl;
+    @Value("${hosts.open-route.api-key}")
+    private String openRouteApiKey;
+
 }

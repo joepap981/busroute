@@ -26,6 +26,10 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
     implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:2.1.2'
 
+    // https://mvnrepository.com/artifact/de.grundid.opendatalab/geojson-jackson
+    compile group: 'de.grundid.opendatalab', name: 'geojson-jackson', version: '1.0'
+
+
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'org.postgresql:postgresql'
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'

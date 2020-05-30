@@ -1,4 +1,4 @@
-package com.joepap.busroute.model;
+package com.joepap.busroute.model.gbis;
 
 import javax.xml.bind.annotation.XmlRootElement;
 

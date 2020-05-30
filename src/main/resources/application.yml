@@ -1,7 +1,7 @@
 server:
   port: 8080
   servlet:
-    contextPath: /busroute
+    contextPath: /api
 
 spring:
   application:
@@ -10,9 +10,13 @@ spring:
     active: local
 
 
-gbis:
-  base-url: http://openapi.gbis.go.kr/ws/rest
-  service-key: HD%2BtUBYYJplyN8UPJPPp28aQYj03qS%2F4mEQ6X5cyc2C6426SyBnfvEd3bfiyBtwPHoqF8IyQJfdO%2BTErrHCdTQ%3D%3D
+hosts:
+  gbis:
+    base-url: http://openapi.gbis.go.kr/ws/rest
+    service-key: HD%2BtUBYYJplyN8UPJPPp28aQYj03qS%2F4mEQ6X5cyc2C6426SyBnfvEd3bfiyBtwPHoqF8IyQJfdO%2BTErrHCdTQ%3D%3D
+  open-route:
+    base-url: https://api.openrouteservice.org
+    api-key: 5b3ce3597851110001cf6248d949e059851c45e39536b69bc5033251
 
 
 ---
