@@ -23,4 +23,10 @@ public class RouteBuilderController {
         FeatureCollection featureCollection = routeBuilderService.buildBusRouteFeatureCollection(routeId);
         return ResponseEntity.ok(featureCollection);
     }
+
+    @GetMapping("/area/{areaId}")
+    public ResponseEntity<FeatureCollection> getBusRouteAreaGson (@PathVariable("areaId") Integer areaId) {
+        FeatureCollection featureCollection = routeBuilderService.buildBusRouteByAreaFeatureCollection(areaId);
+        return ResponseEntity.ok(featureCollection);
+    }
 }

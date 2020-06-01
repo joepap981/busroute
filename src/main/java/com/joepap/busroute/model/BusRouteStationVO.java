@@ -1,17 +1,20 @@
 package com.joepap.busroute.model;
 
+import lombok.Data;
+
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name = "busRouteStationList")
+@Data
 public class BusRouteStationVO {
-    public String centerYn;
-    public Integer districtCd;
-    public Integer mobileNo;
-    public String regionName;
-    public Long stationId;
-    public String stationName;
-    public Double x;
-    public Double y;
-    public Integer stationSeq;
-    public String turnYn;
+    private String centerYn;
+    private Integer districtCd;
+    private Integer mobileNo;
+    private String regionName;
+    private Long stationId;
+    private String stationName;
+    private Double x;
+    private Double y;
+    private Integer stationSeq;
+    private String turnYn;
 }

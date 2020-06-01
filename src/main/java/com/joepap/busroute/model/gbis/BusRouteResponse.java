@@ -1,12 +1,13 @@
 package com.joepap.busroute.model.gbis;
 
-import javax.xml.bind.annotation.XmlElement;
+import lombok.Data;
+
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name = "response")
+@Data
 public class BusRouteResponse {
-    public ComMsgHeader comMsgHeader;
-    public MsgHeader msgHeader;
-    @XmlElement(name = "msgBody")
-    public BusRouteBody busRouteBody;
+    private ComMsgHeader comMsgHeader;
+    private MsgHeader msgHeader;
+    private BusRouteBody msgBody;
 }

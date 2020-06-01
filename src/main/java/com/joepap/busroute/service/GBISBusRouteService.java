@@ -1,6 +1,8 @@
 package com.joepap.busroute.service;
 
 import com.joepap.busroute.config.ServiceConfiguration;
+import com.joepap.busroute.model.BusRouteLineVO;
+import com.joepap.busroute.model.gbis.BusRouteLineResponse;
 import com.joepap.busroute.model.gbis.BusRouteResponse;
 import com.joepap.busroute.model.gbis.BusRouteStationResponse;
 import com.joepap.busroute.model.BusRouteStationVO;
@@ -9,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -51,19 +54,23 @@ public class GBISBusRouteService {
             Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
 
             xmlResponse = (BusRouteResponse) jaxbUnmarshaller.unmarshal(new StringReader(Objects.requireNonNull(xmlResponseString)));
+            if (xmlResponse == null || xmlResponse.getMsgBody() == null) {
+                log.error("No content found for areaId : {}", areaId);
+                throw new HttpServerErrorException(HttpStatus.NO_CONTENT);
+            }
         }
         catch (JAXBException e) {
             log.error("Failed to create jaxbMarshaller.");
             throw new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (NullPointerException e) {{
+        } catch (NullPointerException e) {
             log.error("Null response for client request : {}", operationName);
             throw new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR);
-        }} catch (URISyntaxException e) {
+        } catch (URISyntaxException e) {
             log.error("Failed building URI for : {}.", operationName);
             throw new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-        return xmlResponse.busRouteBody.busRouteVOList;
+        return xmlResponse.getMsgBody().getBusRouteList();
     }
 
     public List<BusRouteStationVO> getBusRouteStationListByRoute (String routeId) {
@@ -78,6 +85,10 @@ public class GBISBusRouteService {
             Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
 
             xmlResponse = (BusRouteStationResponse) jaxbUnmarshaller.unmarshal(new StringReader(Objects.requireNonNull(xmlResponseString)));
+            if (xmlResponse == null || xmlResponse.getMsgBody() == null) {
+                log.info("No BusRouteStation found for route {}", routeId);
+                throw new HttpClientErrorException(HttpStatus.NO_CONTENT);
+            }
         } catch (JAXBException e) {
             log.error("Failed to create jaxbMarshaller.");
             throw new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -89,7 +100,37 @@ public class GBISBusRouteService {
             throw new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-        return xmlResponse.msgBody.busRouteStationList;
+        return xmlResponse.getMsgBody().getBusRouteStationList();
+    }
+
+    public List<BusRouteLineVO> getBusRouteLineByRouteId (String routeId) {
+        log.info("Requesting busRouteLineList for route {}.", routeId);
+        BusRouteLineResponse xmlResponse = new BusRouteLineResponse();
+        String operationName = "/line";
+
+        try {
+            URI uri = uriBuilder(operationName, Collections.singletonMap("routeId", routeId));
+            String xmlResponseString = webClient.get().uri(uri).retrieve().bodyToFlux(String.class).blockFirst();
+            JAXBContext jaxbContext = JAXBContext.newInstance(BusRouteLineResponse.class);
+            Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
+
+            xmlResponse = (BusRouteLineResponse) jaxbUnmarshaller.unmarshal(new StringReader(Objects.requireNonNull(xmlResponseString)));
+            if (xmlResponse == null || xmlResponse.getMsgBody() == null) {
+                log.info("No BusRouteLine found for route {}", routeId);
+                throw new HttpClientErrorException(HttpStatus.NO_CONTENT);
+            }
+        } catch (JAXBException e) {
+            log.error("Failed to create jaxbMarshaller.");
+            throw new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (NullPointerException e) {{
+            log.error("Null response for client request : " + operationName);
+            throw new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR);
+        }} catch (URISyntaxException e) {
+            log.error("Failed building URI for : {}.", operationName);
+            throw new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        return xmlResponse.getMsgBody().getBusRouteLineList();
     }
 
     private URI uriBuilder (String operationName, Map<String, String> queryParam) throws URISyntaxException {

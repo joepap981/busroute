@@ -1,6 +1,7 @@
 package com.joepap.busroute.controller;
 
 import com.joepap.busroute.common.RegularResponse;
+import com.joepap.busroute.model.BusRouteLineVO;
 import com.joepap.busroute.model.BusRouteStationVO;
 import com.joepap.busroute.model.BusRouteVO;
 import com.joepap.busroute.service.GBISBusRouteService;
@@ -40,6 +41,18 @@ public class BusRouteController {
                 .responseCode(200)
                 .message("success")
                 .data(busRouteList)
+                .build();
+
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/route/line/{routeId}")
+    public ResponseEntity<RegularResponse> getBusRouteLineList (@PathVariable("routeId") String routeId) {
+        List<BusRouteLineVO> busRouteLineList = gbisBusRouteService.getBusRouteLineByRouteId(routeId);
+        RegularResponse response = RegularResponse.builder()
+                .responseCode(200)
+                .message("success")
+                .data(busRouteLineList)
                 .build();
 
         return ResponseEntity.ok(response);
