@@ -20,6 +20,7 @@ import java.util.List;
 
 @Service
 @Slf4j
+@Deprecated
 public class OpenRouteService {
 
     private WebClient webClient;

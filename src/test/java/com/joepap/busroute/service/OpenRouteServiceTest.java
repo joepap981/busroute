@@ -27,7 +27,7 @@ public class OpenRouteServiceTest {
         List<BusRouteStationVO> busRouteStationList = gbisBusRouteService.getBusRouteStationListByRoute("240000114");
 
         List<Double[]> coordinates = busRouteStationList.stream()
-                .map(station -> new Double[]{station.x, station.y})
+                .map(station -> new Double[]{station.getX(), station.getY()})
                 .collect(Collectors.toList());
 
         FeatureCollection featureCollection = openRouteService.getDirectionMultiCoordinates(coordinates);

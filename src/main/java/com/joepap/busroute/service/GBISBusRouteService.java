@@ -2,9 +2,7 @@ package com.joepap.busroute.service;
 
 import com.joepap.busroute.config.ServiceConfiguration;
 import com.joepap.busroute.model.BusRouteLineVO;
-import com.joepap.busroute.model.gbis.BusRouteLineResponse;
-import com.joepap.busroute.model.gbis.BusRouteResponse;
-import com.joepap.busroute.model.gbis.BusRouteStationResponse;
+import com.joepap.busroute.model.gbis.*;
 import com.joepap.busroute.model.BusRouteStationVO;
 import com.joepap.busroute.model.BusRouteVO;
 import lombok.extern.slf4j.Slf4j;
@@ -71,6 +69,38 @@ public class GBISBusRouteService {
         }
 
         return xmlResponse.getMsgBody().getBusRouteList();
+    }
+
+    public BusRouteInfoItem getBusRouteInfo (String routeId) {
+        log.info("Requesting bus route info for routeId : {}", routeId);
+        BusRouteInfoResponse xmlResponse = new BusRouteInfoResponse();
+        String operationName = "/info";
+
+        try {
+            URI uri = uriBuilder(operationName, Collections.singletonMap("routeId", routeId));
+            String xmlResponseString = webClient.get().uri(uri).retrieve().bodyToFlux(String.class).blockFirst();
+            JAXBContext jaxbContext = JAXBContext.newInstance(BusRouteInfoResponse.class);
+            Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
+
+            xmlResponse = (BusRouteInfoResponse) jaxbUnmarshaller.unmarshal(new StringReader(Objects.requireNonNull(xmlResponseString)));
+            if (xmlResponse == null || xmlResponse.getMsgBody() == null) {
+                log.info("No BusRouteInfo found for route {}", routeId);
+                throw new HttpClientErrorException(HttpStatus.NO_CONTENT);
+            }
+        } catch (JAXBException e) {
+            log.error("Failed to create jaxbMarshaller.");
+            throw new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (NullPointerException e) {{
+            log.error("Null response for client request : " + operationName);
+            throw new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR);
+        }} catch (URISyntaxException e) {
+            log.error("Failed building URI for : {}.", operationName);
+            throw new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        BusRouteInfoItem busRouteInfoItem = xmlResponse.getMsgBody().getBusRouteInfoItem();
+        log.info("Received {}", busRouteInfoItem);
+        return busRouteInfoItem;
     }
 
     public List<BusRouteStationVO> getBusRouteStationListByRoute (String routeId) {
