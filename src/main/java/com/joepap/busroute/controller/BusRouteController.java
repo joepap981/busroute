@@ -5,16 +5,17 @@ import com.joepap.busroute.model.BusRouteLineVO;
 import com.joepap.busroute.model.BusRouteStationVO;
 import com.joepap.busroute.model.BusRouteVO;
 import com.joepap.busroute.model.gbis.BusRouteInfoItem;
+import com.joepap.busroute.model.request.GetRouteIdFromNameRequest;
 import com.joepap.busroute.service.GBISBusRouteService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
 import java.util.List;
 
+@Slf4j
 @Controller
 @RequestMapping("/v1/bus")
 public class BusRouteController {
@@ -26,12 +27,12 @@ public class BusRouteController {
     }
 
     /**
-     * 지역별 노선목록 조회
+     * Search route by area
      * @param areaId
      * @return
      */
     @GetMapping("/route/list/{areaId}")
-    public ResponseEntity<RegularResponse> getBusRouteList (@PathVariable("areaId") Integer areaId) {
+    public ResponseEntity<RegularResponse> getBusRouteList (@PathVariable("areaId") String areaId) {
         List<BusRouteVO> busRouteList = gbisBusRouteService.getBusRouteListByArea(areaId);
         RegularResponse response = RegularResponse.builder()
                 .responseCode(200)
@@ -43,7 +44,7 @@ public class BusRouteController {
     }
 
     /**
-     * 노선상세 정보 조회
+     * Search route details
      * @param routeId
      * @return
      */
@@ -60,7 +61,7 @@ public class BusRouteController {
     }
 
     /**
-     * 노선경유정류소 조회
+     * Search Stations visited in route
      * @param routeId
      * @return
      */
@@ -77,7 +78,7 @@ public class BusRouteController {
     }
 
     /**
-     * 노선형상 조회
+     * Get route shape
      * @param routeId
      * @return
      */
@@ -93,5 +94,13 @@ public class BusRouteController {
         return ResponseEntity.ok(response);
     }
 
+    @PostMapping("/route/routeId")
+    public ResponseEntity<RegularResponse> getBusRouteIdFromName (@RequestBody GetRouteIdFromNameRequest request) {
+        List<String> routeIdList = gbisBusRouteService.getRouteIdFromName(request.getAreaIdList(), request.getRouteNameList());
+        RegularResponse response = RegularResponse.builder()
+                .data(routeIdList)
+                .build();
 
+        return ResponseEntity.ok(response);
+    }
 }

@@ -20,10 +20,8 @@ import javax.xml.bind.Unmarshaller;
 import java.io.StringReader;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -40,13 +38,13 @@ public class GBISBusRouteService {
         this.webClient = WebClient.create(serviceConf.getGbisBaseUrl());
     }
 
-    public List<BusRouteVO> getBusRouteListByArea (int areaId) {
+    public List<BusRouteVO> getBusRouteListByArea (String areaId) {
         log.info("Requesting busRouteList for area {}.", areaId);
         BusRouteResponse xmlResponse = new BusRouteResponse();
         String operationName = "/area";
 
         try {
-            URI uri = uriBuilder(operationName, Collections.singletonMap("areaId",Integer.toString(areaId)));
+            URI uri = uriBuilder(operationName, Collections.singletonMap("areaId",areaId));
             String xmlResponseString = webClient.get().uri(uri).retrieve().bodyToFlux(String.class).blockFirst();
             JAXBContext jaxbContext = JAXBContext.newInstance(BusRouteResponse.class);
             Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
@@ -102,6 +100,7 @@ public class GBISBusRouteService {
         log.info("Received {}", busRouteInfoItem);
         return busRouteInfoItem;
     }
+
 
     public List<BusRouteStationVO> getBusRouteStationListByRoute (String routeId) {
         log.info("Requesting busRouteStationList for route {}.", routeId);
@@ -176,5 +175,22 @@ public class GBISBusRouteService {
         }
 
         return new URI(sb.toString());
+    }
+
+    public List<String> getRouteIdFromName (List<String> areaIdList, List<String> routeNameList){
+
+        List<BusRouteVO> busRouteList = new ArrayList<>();
+
+        Map<String, String> routeNameIdMap = new HashMap<>();
+
+        for (String areaId : areaIdList) {
+            List<BusRouteVO> areaRouteList = getBusRouteListByArea(areaId);
+            busRouteList.addAll(areaRouteList);
+        }
+
+        return busRouteList.stream()
+                .filter(busRoute-> routeNameList.contains(busRoute.getRouteName()))
+                .map(BusRouteVO::getRouteId)
+                .collect(Collectors.toList());
     }
 }

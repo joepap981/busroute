@@ -11,7 +11,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor @NoArgsConstructor
 public class RegularResponse {
-    private Integer responseCode;
-    private String message;
+    private Integer responseCode = 200;
+    private String message = "Success";
     private List<?> data;
 }

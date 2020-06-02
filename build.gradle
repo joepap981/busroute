@@ -15,7 +15,16 @@ configurations {
 }
 
 repositories {
+    maven {
+        url 'http://download.osgeo.org/webdav/geotools/'
+    }
+
+    maven {
+        url 'http://maven.icm.edu.pl/artifactory/repo/'
+    }
+
     mavenCentral()
+
 }
 
 dependencies {
@@ -27,6 +36,12 @@ dependencies {
 
     // https://mvnrepository.com/artifact/de.grundid.opendatalab/geojson-jackson
     compile group: 'de.grundid.opendatalab', name: 'geojson-jackson', version: '1.0'
+
+    // https://mvnrepository.com/artifact/org.geotools/gt-shapefile
+    compile group: 'org.geotools', name: 'gt-shapefile', version: '22-RC'
+
+    // https://mvnrepository.com/artifact/org.geotools/gt-epsg-hsql
+    testCompile group: 'org.geotools', name: 'gt-epsg-hsql', version: '22-RC'
 
 
     compileOnly 'org.projectlombok:lombok'

@@ -10,6 +10,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.junit.Assert.*;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @SpringBootTest
@@ -20,7 +22,7 @@ public class GBISBusRouteServiceTest {
 
     @Test
     public void getBusRouteListByArea() {
-        List<BusRouteVO> busRouteList = gbisBusRouteService.getBusRouteListByArea(19);
+        List<BusRouteVO> busRouteList = gbisBusRouteService.getBusRouteListByArea("19");
         assertEquals(141, busRouteList.size());
     }
 
@@ -28,5 +30,26 @@ public class GBISBusRouteServiceTest {
     public void getBusRouteStationListByRoute() {
         List<BusRouteStationVO> busRouteStationList = gbisBusRouteService.getBusRouteStationListByRoute("240000114");
         assertEquals(28, busRouteStationList.size());
+    }
+
+    @Test
+    public void getRouteIdFromName() {
+
+        List<String> areaIdList = new ArrayList<>();
+        List<String> routeNameList = new ArrayList<>();
+
+
+        areaIdList.addAll(Arrays.asList(new String[]{"05", "19", "26", "16"}));
+        routeNameList.add("1-6");
+        routeNameList.add("10");
+        routeNameList.add("110");
+        routeNameList.add("111");
+        routeNameList.add("120");
+        routeNameList.add("130");
+
+        List<String> routeIdList = gbisBusRouteService.getRouteIdFromName(areaIdList, routeNameList);
+        System.out.println(routeIdList);
+
+
     }
 }
